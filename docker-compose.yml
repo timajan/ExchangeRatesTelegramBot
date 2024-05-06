@@ -1,0 +1,21 @@
+version: "1.0"
+
+services:
+
+  api:
+    build: ./api
+    restart: always
+    volumes:
+      - ./api:/api
+    ports:
+      - 5000:5000
+
+  bot:
+    build: ./telegram_bot
+    restart: always
+    volumes:
+      - ./telegram_bot:/bot
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
