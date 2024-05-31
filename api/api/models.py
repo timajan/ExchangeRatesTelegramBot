@@ -50,6 +50,16 @@ class Wallet(db.Model):
     def __repr__(self):
         return f'<Wallet {self.title}>'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'user_id': self.user_id,
+            'basic_currency_id': self.basic_currency_id,
+            'amount': self.amount
+        }
+
 
 class Income(db.Model):
     __tablename__ = 'incomes'

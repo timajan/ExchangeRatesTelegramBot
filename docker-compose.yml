@@ -33,7 +33,7 @@ services:
     build: ./telegram_bot
     restart: always
     volumes:
-      - ./telegram_bot:/bot
+      - ./telegram_bot:/telegram_bot
     env_file:
       - .env
     ports:
