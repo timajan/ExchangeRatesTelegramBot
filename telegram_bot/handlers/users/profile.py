@@ -5,6 +5,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from keyboards.default.profile import profile_menu, back_to_profile
 from keyboards.default.main_menu import create_main_menu, cancel_menu
+from keyboards.default.operations import operations_menu
 from keyboards.inline.currency import currency_inline_menu
 
 from datetime import datetime
@@ -29,7 +30,7 @@ async def show_profile(message: Message, state: FSMContext):
     )
 
 
-@dp.message_handler(Text(equals=['Переглянути гаманці']))
+@dp.message_handler(Text(equals=['фцу']))
 async def show_users_wallets(message: Message):
     """Check all users wallets"""
 
@@ -58,6 +59,14 @@ async def show_users_wallets(message: Message):
             text="Трапилася помилка. Спробуйте пізніше",
             reply_markup=create_main_menu(auth=False)
         )
+
+
+@dp.message_handler(Text(equals=['Зробити операцію']))
+async def process_creation_wallet(message: Message):
+    """Open operations menu"""
+    await message.answer(
+        text="Оберіть тип операції", reply_markup=operations_menu
+    )
 
 
 @dp.message_handler(Text(equals=['Створити новий гаманець']))

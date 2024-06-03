@@ -1,5 +1,7 @@
 from datetime import datetime
 from . import db
+import random
+from sqlalchemy.exc import IntegrityError
 
 
 class User(db.Model):
@@ -32,6 +34,14 @@ class Currency(db.Model):
     def __repr__(self):
         return f'<Currency {self.code}>'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'code': self.code,
+            'symbol': self.symbol
+        }
+
 
 class Wallet(db.Model):
     __tablename__ = 'wallet'
@@ -41,6 +51,7 @@ class Wallet(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     basic_currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'))
     amount = db.Column(db.Float)
+    number = db.Column(db.Integer, unique=True)  # Corrected the field name to match the column definition
 
     incomes = db.relationship('Income', backref='wallet', lazy=True)
     expenses = db.relationship('Expense', backref='wallet', lazy=True)
@@ -57,8 +68,19 @@ class Wallet(db.Model):
             'description': self.description,
             'user_id': self.user_id,
             'basic_currency_id': self.basic_currency_id,
+            'number': self.number,
             'amount': self.amount
         }
+
+
+@db.event.listens_for(Wallet, 'before_insert')
+def generate_six_digit_number(mapper, connection, target):
+    if not target.number:  # Corrected to match the field name
+        while True:
+            target.number = random.randint(100000, 999999)
+            existing_wallet = Wallet.query.filter_by(number=target.number).first()  # Corrected to match the field name
+            if existing_wallet is None:
+                break
 
 
 class Income(db.Model):
